@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Laboratory of Resonance | Active Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Chosen Palette: Minjerribah Sand & Aura Purple */
+        :root {
+            --sand: #FDFCF8;
+            --purple: #8B5CF6;
+            --deep: #1F2937;
+            --teal: #14B8A6;
+        }
+        body {
+            background-color: var(--sand);
+            color: var(--deep);
+            font-family: 'Inter', sans-serif;
+        }
+        .serif-font { font-family: 'Cormorant Garamond', serif; }
+        
+        .tool-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.1);
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 250px;
+        }
+
+        /* Custom Toggle for Aura Consent */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #E5E7EB;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--purple); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        /* Scanning Animation for Node Monitor */
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+        .scanner-line {
+            height: 2px;
+            background: rgba(20, 184, 166, 0.3);
+            position: absolute;
+            width: 100%;
+            animation: scan 4s linear infinite;
+        }
+    </style>
+</head>
+<body class="pb-20">
+
+    <!-- Header / Global Navigation -->
+    <nav class="p-6 flex justify-between items-center max-w-6xl mx-auto">
+        <div class="flex items-center gap-3">
+            <span class="text-2xl">⚛️</span>
+            <h1 class="text-xl font-bold tracking-tight serif-font italic">Laboratory of Resonance</h1>
+        </div>
+        <a href="index.html" class="text-sm font-medium text-stone-500 hover:text-purple-600 flex items-center gap-1 transition">
+            <span>←</span> Back to Index
+        </a>
+    </nav>
+
+    <!-- Introductory Paragraph -->
+    <header class="max-w-4xl mx-auto px-6 py-10 text-center">
+        <h2 class="text-4xl serif-font font-light mb-4">Operationalizing Protopia</h2>
+        <p class="text-stone-600 leading-relaxed">
+            This space allows you to play with the functional units of the ecosystem. These tools are designed to demonstrate how story, energy, and infrastructure intersect to create non-institutional sovereignty.
+        </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <!-- TOOL 1: THE CHAOS ORACLE -->
+        <!-- Visualization & Content Choices: 
+             Goal: Demonstrate "Spontaneity and Quest Propagation".
+             Method: Interactive random generator that uses narrative seeds from the "Global Chaos Itinerary".
+             Interaction: "Cast the Oracle" button triggers a sequence of text transitions.
+             Justification: It shows that travel is a mission-deployment mechanism, not leisure. -->
+        <section class="tool-card p-8 rounded-3xl flex flex-col h-full">
+            <div class="mb-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold uppercase tracking-widest text-purple-600">Module 01</span>
+                    <span class="px-2 py-0.5 rounded-md bg-purple-50 text-[10px] font-bold text-purple-700">ACTIVE</span>
+                </div>
+                <h3 class="text-2xl serif-font font-bold">The Chaos Oracle</h3>
+                <p class="text-sm text-stone-500 mt-2">A narrative generator for spontaneous cultural diplomacy.</p>
+            </div>
+            
+            <div class="flex-grow bg-stone-50 rounded-2xl p-6 border border-stone-100 mb-6 relative overflow-hidden">
+                <div id="oracleOutput" class="h-full flex flex-col justify-center items-center text-center">
+                    <span class="text-4xl mb-4">🔮</span>
+                    <p class="italic text-stone-400">Ready for Transmission...</p>
+                </div>
+            </div>
+
+            <button onclick="castOracle()" id="oracleBtn" class="w-full py-4 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition shadow-lg shadow-purple-200">
+                Cast the Oracle
+            </button>
+            <p class="text-[10px] text-stone-400 text-center mt-3 uppercase tracking-tighter">Powered by the Chaos Theory Itinerary Engine</p>
+        </section>
+
+        <!-- TOOL 2: THE BRAIDED EXCHANGE -->
+        <!-- Visualization & Content Choices: 
+             Goal: Visualize the "C-Hour" vs. "Fiat" value exchange.
+             Method: Dynamic Bar Chart (Chart.js) reacting to user sliders.
+             Interaction: Sliders for "Labor Hours" and "Regenerative Impact".
+             Justification: Makes the "Incomplete Ledger" concept tangible. -->
+        <section class="tool-card p-8 rounded-3xl flex flex-col h-full">
+            <div class="mb-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold uppercase tracking-widest text-teal-600">Module 02</span>
+                    <span class="px-2 py-0.5 rounded-md bg-teal-50 text-[10px] font-bold text-teal-700">ACTIVE</span>
+                </div>
+                <h3 class="text-2xl serif-font font-bold">Braided Economy Simulator</h3>
+                <p class="text-sm text-stone-500 mt-2">Calculate the value of regenerative labor (C-Hours).</p>
+            </div>
+
+            <div class="chart-container mb-8">
+                <canvas id="economyChart"></canvas>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <div class="flex justify-between text-xs mb-2">
+                        <label class="font-bold text-stone-600">Human Energy (Hours)</label>
+                        <span id="hoursLabel" class="text-teal-600 font-bold">40h</span>
+                    </div>
+                    <input type="range" id="hoursInput" min="1" max="100" value="40" class="w-full accent-teal-600 h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs mb-2">
+                        <label class="font-bold text-stone-600">Impact Multiplier (Vibe)</label>
+                        <span id="vibeLabel" class="text-purple-600 font-bold">1.5x</span>
+                    </div>
+                    <input type="range" id="vibeInput" min="1" max="50" value="15" class="w-full accent-purple-600 h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-stone-100 flex justify-between items-center">
+                <div class="text-xs text-stone-400 uppercase font-bold tracking-widest">Calculated Worth</div>
+                <div id="totalWorth" class="text-2xl font-bold text-stone-800 serif-font">60 C-Hours</div>
+            </div>
+        </section>
+
+        <!-- TOOL 3: THE NODE STATUS MONITOR -->
+        <!-- Visualization & Content Choices: 
+             Goal: Visualizing technical resilience (The Survival Core).
+             Method: Canvas-based "Heartbeat" monitor.
+             Interaction: Toggles between "Abundance" and "Survival" states.
+             Justification: Demonstrates the "PMU Protocol" from the Resilient Island Network document. -->
+        <section class="tool-card p-8 rounded-3xl md:col-span-2">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="md:col-span-1">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-widest text-orange-600">Module 03</span>
+                        <div id="statusPulse" class="w-2 h-2 rounded-full bg-green-500"></div>
+                    </div>
+                    <h3 class="text-2xl serif-font font-bold">Sovereign Node Pulse</h3>
+                    <p class="text-sm text-stone-500 mt-2 mb-6">Real-time status of the Minjerribah Hardened Mesh Node.</p>
+                    
+                    <div class="space-y-4">
+                        <div class="p-3 rounded-xl bg-stone-50 border border-stone-100">
+                            <label class="block text-[10px] font-bold text-stone-400 uppercase mb-1">Power State Protocol</label>
+                            <select id="powerState" class="w-full bg-transparent text-sm font-bold focus:outline-none cursor-pointer">
+                                <option value="abundance">Abundance (Full 4K Sync)</option>
+                                <option value="constraint">Constraint (E-Ink Mode)</option>
+                                <option value="survival">Survival (Ghost Mesh)</option>
+                            </select>
+                        </div>
+                        <div class="p-3 rounded-xl bg-stone-50 border border-stone-100">
+                            <label class="block text-[10px] font-bold text-stone-400 uppercase mb-1">Local Network Vibe</label>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-mono text-teal-600">88%</span>
+                                <div class="h-1 flex-grow bg-stone-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-teal-500 w-[88%]"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 bg-stone-900 rounded-2xl overflow-hidden relative">
+                    <div class="scanner-line"></div>
+                    <canvas id="nodeCanvas" class="w-full h-64"></canvas>
+                    <div class="absolute bottom-4 left-4 flex gap-4">
+                        <div class="flex items-center gap-2 text-[10px] text-stone-500">
+                            <span class="w-2 h-2 rounded-full bg-purple-500"></span> The Brain (Engage)
+                        </div>
+                        <div class="flex items-center gap-2 text-[10px] text-stone-500">
+                            <span class="w-2 h-2 rounded-full bg-teal-500"></span> The Heart (Survive)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TOOL 4: AURA FRACTAL CONSENT -->
+        <!-- Visualization & Content Choices: 
+             Goal: Explain "Fractal Consent" for AI Digital Twins.
+             Method: Simple UI toggles that show the "Consent Layer" hierarchy.
+             Interaction: Clicking toggles changes a central "Vibe Score".
+             Justification: Demonstrates privacy sovereignty. -->
+        <section class="tool-card p-8 rounded-3xl md:col-span-2 lg:col-span-1">
+            <h3 class="text-2xl serif-font font-bold mb-4">Aura Consent Matrix</h3>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 bg-white border border-stone-100 rounded-2xl">
+                    <div>
+                        <p class="font-bold text-sm">Biometric Mirroring</p>
+                        <p class="text-xs text-stone-400">Share heart rate with local songline sensors.</p>
+                    </div>
+                    <label class="switch"><input type="checkbox" checked onchange="updateAura()"><span class="slider"></span></label>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-white border border-stone-100 rounded-2xl">
+                    <div>
+                        <p class="font-bold text-sm">Narrative Synthesis</p>
+                        <p class="text-xs text-stone-400">Allow AI to generate quests from personal logs.</p>
+                    </div>
+                    <label class="switch"><input type="checkbox" onchange="updateAura()"><span class="slider"></span></label>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-white border border-stone-100 rounded-2xl">
+                    <div>
+                        <p class="font-bold text-sm">Identity Masking</p>
+                        <p class="text-xs text-stone-400">Encrypt real name behind tribal pseudonym.</p>
+                    </div>
+                    <label class="switch"><input type="checkbox" checked onchange="updateAura()"><span class="slider"></span></label>
+                </div>
+            </div>
+        </section>
+
+        <!-- TOOL 5: STORY PROPAGATION TRACKER -->
+        <section class="tool-card p-8 rounded-3xl md:col-span-2 lg:col-span-1 flex flex-col justify-center">
+            <div class="text-center">
+                <div class="text-5xl mb-4">🌱</div>
+                <h3 class="text-2xl serif-font font-bold">Story Propagation</h3>
+                <p class="text-stone-500 text-sm max-w-xs mx-auto mt-2">
+                    Visualizing how "The Quest" spreads through gossip, reputation, and resonance rather than marketing.
+                </p>
+                <div class="mt-6 flex justify-center items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-200"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-300"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-600"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-700"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-800"></span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-20 text-center text-[10px] text-stone-400 uppercase tracking-widest font-bold">
+        <!-- Application Structure Plan: This "Laboratory" allows the user to explore the project's technical and economic models through sliders, generators, and canvas animations. It transitions the theory from the landing page into a hands-on experience. -->
+        <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+        End of Transmission // Aura of Intelligence v1.2
+    </footer>
+
+    <script>
+        // --- TOOL 1: THE CHAOS ORACLE LOGIC ---
+        const quests = [
+            { loc: "Burbank, CA", task: "Locate an indie film producer; discuss the 'Silent Abyss' protocol at a coffee shop.", vibe: "Mystery" },
+            { loc: "Amity Point, QLD", task: "Witness the sunset at the jetty; upload one 'Seed Artifact' to the local mesh.", vibe: "Resonance" },
+            { loc: "Berlin, DE", task: "Engage with the 'Deep Tech' circle; introduce the concept of the 'Sand Battery' as art.", vibe: "Abundance" },
+            { loc: "Tulum, MX", task: "Host a mixed-media gathering; facilitate 'Fractal Consent' training for travelers.", vibe: "Vitality" },
+            { loc: "Kyoto, JP", task: "Seek the 'Osteomorphic Block' manufacturer; discuss inter-generational resilience.", vibe: "Sovereignty" }
+        ];
+
+        function castOracle() {
+            const output = document.getElementById('oracleOutput');
+            const btn = document.getElementById('oracleBtn');
+            
+            btn.disabled = true;
+            btn.innerText = "Interrogating the Field...";
+            output.innerHTML = `<span class="text-4xl animate-spin inline-block">🌀</span><p class="mt-4 text-purple-600 font-bold">Connecting...</p>`;
+
+            setTimeout(() => {
+                const q = quests[Math.floor(Math.random() * quests.length)];
+                output.innerHTML = `
+                    <div class="animate-fadeIn">
+                        <span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-[10px] font-bold rounded uppercase">${q.vibe}</span>
+                        <h4 class="text-xl serif-font font-bold mt-2 text-stone-800">${q.loc}</h4>
+                        <p class="text-sm text-stone-600 mt-2 leading-relaxed px-4">"${q.task}"</p>
+                    </div>
+                `;
+                btn.disabled = false;
+                btn.innerText = "Cast Again";
+            }, 1500);
+        }
+
+        // --- TOOL 2: BRAIDED ECONOMY CHART ---
+        const ctx = document.getElementById('economyChart').getContext('2d');
+        let econChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Fiat Worth (AUD)', 'Sovereign Worth (C-Hours)'],
+                datasets: [{
+                    label: 'Asset Comparison',
+                    data: [1200, 60],
+                    backgroundColor: ['rgba(168, 162, 158, 0.4)', 'rgba(20, 184, 166, 0.7)'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { display: false }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        function updateEconomy() {
+            const h = document.getElementById('hoursInput').value;
+            const v = document.getElementById('vibeInput').value / 10;
+            const total = Math.round(h * v);
+            
+            document.getElementById('hoursLabel').innerText = h + 'h';
+            document.getElementById('vibeLabel').innerText = v.toFixed(1) + 'x';
+            document.getElementById('totalWorth').innerText = total + ' C-Hours';
+
+            econChart.data.datasets[0].data = [h * 35, total]; // Arbitrary 35/hr fiat rate
+            econChart.update('none');
+        }
+
+        document.getElementById('hoursInput').oninput = updateEconomy;
+        document.getElementById('vibeInput').oninput = updateEconomy;
+
+        // --- TOOL 3: NODE CANVAS PULSE ---
+        const canvas = document.getElementById('nodeCanvas');
+        const c = canvas.getContext('2d');
+        const pState = document.getElementById('powerState');
+        const pulseDot = document.getElementById('statusPulse');
+
+        let points = [];
+        let time = 0;
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+
+        function draw() {
+            c.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Grid lines
+            c.strokeStyle = 'rgba(255,255,255,0.05)';
+            c.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=40) {
+                c.beginPath(); c.moveTo(i,0); c.lineTo(i,canvas.height); c.stroke();
+            }
+            for(let i=0; i<canvas.height; i+=40) {
+                c.beginPath(); c.moveTo(0,i); c.lineTo(canvas.width,i); c.stroke();
+            }
+
+            const state = pState.value;
+            let speed = 0.05;
+            let amplitude = 40;
+            let color = '#14B8A6'; // Teal (Heart)
+
+            if(state === 'abundance') {
+                speed = 0.1; amplitude = 60; color = '#8B5CF6'; // Purple (Brain)
+                pulseDot.className = "w-2 h-2 rounded-full bg-green-500 animate-pulse";
+            } else if(state === 'survival') {
+                speed = 0.01; amplitude = 10; color = '#EF4444'; // Red
+                pulseDot.className = "w-2 h-2 rounded-full bg-red-500";
+            } else {
+                pulseDot.className = "w-2 h-2 rounded-full bg-yellow-500 animate-pulse";
+            }
+
+            // Draw Sine Wave (The Pulse)
+            c.beginPath();
+            c.strokeStyle = color;
+            c.lineWidth = 3;
+            c.lineJoin = 'round';
+            c.shadowBlur = 10;
+            c.shadowColor = color;
+
+            for(let x=0; x < canvas.width; x++) {
+                const y = (canvas.height/2) + Math.sin(x * 0.02 + time) * amplitude;
+                if(x === 0) c.moveTo(x,y); else c.lineTo(x,y);
+            }
+            c.stroke();
+            c.shadowBlur = 0;
+
+            time += speed;
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        draw();
+
+        // --- TOOL 4: AURA CONSENT UPDATE ---
+        function updateAura() {
+            // Simple visual feedback for "consent vibe"
+            console.log("Aura Matrix Recalculated.");
+        }
+    </script>
+</body>
+</html>
